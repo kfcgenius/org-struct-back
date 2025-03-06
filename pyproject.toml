@@ -2,16 +2,17 @@
 name = "org-struct-back"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Aleksey",email = "a.e.sokolkov@gmail.com"}
-]
 readme = "README.md"
+authors = [{ name = "Aleksey", email = "a.e.sokolkov@gmail.com" }]
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi[standard] (>=0.115.11,<0.116.0)",
+    "uvicorn[standard] (>=0.34.0,<0.35.0)",
 ]
 
-[tool.poetry]
-packages = [{include = "org_struct_back", from = "src"}]
+
+[tool.poetry.scripts]
+main = "org_struct_back.cli.main:main"
 
 
 [build-system]

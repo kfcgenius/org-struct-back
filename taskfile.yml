@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  win-init:
+    cmds:
+      - poetry config virtualenvs.create true
+      - poetry config virtualenvs.in-project true
+      - poetry config virtualenvs.path .
+      - poetry env activate
+      - poetry install
+
+  run:
+    cmds:
+      - poetry run main
