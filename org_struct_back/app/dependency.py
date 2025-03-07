@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Any
 
 from punq import Container
 
@@ -16,5 +17,5 @@ def build_container() -> Container:
     return container
 
 
-def _register_settings(c: Container, cls: Callable) -> None:
+def _register_settings(c: Container, cls: Callable[..., Any]) -> None:
     c.register(cls, factory=lambda: cls())
