@@ -1,7 +1,13 @@
 version: "3"
 
+dotenv:
+  - .env
+
+env:
+  APP: org_struct_back
+
 tasks:
-  win-init:
+  win-init-poetry:
     cmds:
       - poetry config virtualenvs.create true
       - poetry config virtualenvs.in-project true
@@ -11,4 +17,20 @@ tasks:
 
   run:
     cmds:
-      - poetry run main
+      - uvicorn org_struct_back.app.main:app --host $OSB_SERVER_HOST --port $OSB_SERVER_PORT --reload --workers $OSB_SERVER_WORKERS
+
+  format:
+    cmds:
+      - ruff format $APP
+      - toml-sort pyproject.toml
+
+  lint:
+    cmds:
+      - ruff format --check $APP
+      - ruff check $APP
+      - mypy --install-types --non-interactive $APP
+      - toml-sort --check pyproject.toml
+
+  unused:
+    cmds:
+      - deptry .
