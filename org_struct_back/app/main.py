@@ -1,8 +1,14 @@
+from fastapi import FastAPI
+
+from org_struct_back.api.api import router
 from org_struct_back.app.dependency import build_container
-from org_struct_back.app.server import Server
 from org_struct_back.settings.server_settings import ServerSettings
 
 container = build_container()
 settings: ServerSettings = container.resolve(ServerSettings)
-server: Server = container.resolve(Server)
-app = server.build()
+
+app = FastAPI(title=settings.name)
+
+app.state.ioc_container = container
+
+app.include_router(router)

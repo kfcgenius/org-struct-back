@@ -17,7 +17,7 @@ tasks:
 
   run:
     cmds:
-      - uvicorn org_struct_back.app.main:app --host $OSB_SERVER_HOST --port $OSB_SERVER_PORT --reload --workers $OSB_SERVER_WORKERS
+      - uvicorn org_struct_back.app.main:app --host 0.0.0.0 --port 8080 --reload --workers 1
 
   format:
     cmds:
