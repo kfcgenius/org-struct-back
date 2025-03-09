@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from org_struct_back.api.api import router
+from org_struct_back.api.node_router import node_router
 from org_struct_back.app.dependency import build_container
 from org_struct_back.settings.server_settings import ServerSettings
 
@@ -11,4 +11,4 @@ app = FastAPI(title=settings.name)
 
 app.state.ioc_container = container
 
-app.include_router(router)
+app.include_router(node_router)
