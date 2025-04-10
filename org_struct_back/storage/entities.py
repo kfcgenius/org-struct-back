@@ -21,5 +21,6 @@ class NodeEntity(Base):
         cascade="all, delete-orphan",
         back_populates="parent",
         collection_class=attribute_keyed_dict("name"),
+        lazy="noload"
     )
     parent: Mapped[Optional["NodeEntity"]] = relationship(back_populates="children", remote_side=id)

@@ -3,19 +3,9 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
-class Meta(BaseModel):
-    success: bool
-
-
-class Error(BaseModel):
-    messsage: str
-    code: str
-
-
-class ResponseWrapper[T: BaseModel](BaseModel):
-    data: T | list[T] | None = None
-    meta: Meta
-    errors: list[Error] = []
+class InputError(BaseModel):
+    type: str = "input_error"
+    msg: str
 
 
 class NodeDto(BaseModel):

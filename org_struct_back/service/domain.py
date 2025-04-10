@@ -44,6 +44,10 @@ class NodeServiceImpl(NodeService):
 
     def create(self, name: str, parent_id: UUID | None) -> NodeModel:
         with self._db() as session:
+            if parent_id is not None:
+                parent_node_entity = self._repository.get_by_id(session, parent_id, 0)
+                if parent_node_entity is None:
+                    return None
             node_entity = NodeEntity(id=uuid4(), name=name, parent_id=parent_id)
             self._repository.create(session, node_entity)
             session.commit()

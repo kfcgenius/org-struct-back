@@ -23,20 +23,26 @@ class NodeRepository(ABC):
 
 class NodeRepositoryImpl(NodeRepository):
     def get_by_id(self, session: Session, node_id: UUID, depth: int) -> NodeEntity | None:
-        node_entity = session.scalars(
-            select(NodeEntity)
-            .options(selectinload(NodeEntity.children, recursion_depth=depth))
-            .filter(NodeEntity.id == node_id)
-        ).first()
-        return node_entity
+        query = select(NodeEntity).filter(NodeEntity.id == node_id)
+
+        if depth > 0:
+            current_load = selectinload(NodeEntity.children)
+            for _ in range(depth - 1):
+                current_load = current_load.selectinload(NodeEntity.children)
+            query = query.options(current_load)
+
+        return session.scalars(query).first()
 
     def get_by_name(self, session: Session, name: str, depth: int) -> NodeEntity | None:
-        node_entity = session.scalars(
-            select(NodeEntity)
-            .options(selectinload(NodeEntity.children, recursion_depth=depth))
-            .filter(NodeEntity.name == name)
-        ).first()
-        return node_entity
+        query = select(NodeEntity).filter(NodeEntity.name == name)
+
+        if depth > 0:
+            current_load = selectinload(NodeEntity.children)
+            for _ in range(depth - 1):
+                current_load = current_load.selectinload(NodeEntity.children)
+            query = query.options(current_load)
+
+        return session.scalars(query).first()
 
     def create(self, session: Session, node: NodeEntity) -> None:
         session.add(node)
