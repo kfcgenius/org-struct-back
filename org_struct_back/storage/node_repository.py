@@ -27,7 +27,7 @@ class NodeRepositoryImpl(NodeRepository):
             select(NodeEntity)
             .options(selectinload(NodeEntity.children, recursion_depth=depth))
             .filter(NodeEntity.id == node_id)
-        ).one()
+        ).first()
         return node_entity
 
     def get_by_name(self, session: Session, name: str, depth: int) -> NodeEntity | None:
@@ -35,7 +35,7 @@ class NodeRepositoryImpl(NodeRepository):
             select(NodeEntity)
             .options(selectinload(NodeEntity.children, recursion_depth=depth))
             .filter(NodeEntity.name == name)
-        ).one()
+        ).first()
         return node_entity
 
     def create(self, session: Session, node: NodeEntity) -> None:

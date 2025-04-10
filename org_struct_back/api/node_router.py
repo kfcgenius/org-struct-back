@@ -20,7 +20,7 @@ def get_by_name(
     node_model = service.find_by_name(name, depth)
     if node_model is None:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="000", messsage="Sorry")])
+        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="001", messsage="Node not found")])
 
     node_dto = NodeDto.model_validate(node_model)
 
@@ -37,7 +37,7 @@ def post(
     node_model = service.create(node_create.name, node_create.parent_id)
     if node_model is None:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="000", messsage="Sorry")])
+        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="002", messsage="Failed to create node")])
 
     node_dto = NodeDto.model_validate(node_model)
 
@@ -55,7 +55,7 @@ def get_by_id(
     node_model = service.get_by_id(node_id, depth)
     if node_model is None:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="000", messsage="Sorry")])
+        return ResponseWrapper(meta=Meta(success=False), errors=[Error(code="001", messsage="Node not found")])
 
     node_dto = NodeDto.model_validate(node_model)
 

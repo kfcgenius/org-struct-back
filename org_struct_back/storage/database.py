@@ -6,7 +6,7 @@ from typing import Any
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
-from org_struct_back.pkg.struct_reader import StructReader
+from org_struct_back.pkg import StructReader
 from org_struct_back.settings.database_settings import DatabaseSettings
 from org_struct_back.storage.entities import Base, NodeEntity
 

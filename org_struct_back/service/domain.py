@@ -29,12 +29,16 @@ class NodeServiceImpl(NodeService):
     def get_by_id(self, node_id: UUID, depth: int) -> NodeModel | None:
         with self._db() as session:
             node_entity = self._repository.get_by_id(session, node_id, depth)
+            if node_entity is None:
+                return None
             node_model = NodeModel.model_validate(node_entity)
             return node_model
 
     def find_by_name(self, name: str, depth: int) -> NodeModel | None:
         with self._db() as session:
             node_entity = self._repository.get_by_name(session, name, depth)
+            if node_entity is None:
+                return None
             node_model = NodeModel.model_validate(node_entity)
             return node_model
 
