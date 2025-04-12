@@ -16,7 +16,7 @@ def get_by_name(name: Annotated[str, Query(min_length=1)], service: Annotated[No
     node_model = service.find_by_name(name, depth)
     if node_model is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=InputError(msg="Node not found").model_dump())
+                            detail=[InputError(msg="Node not found").model_dump()])
 
     node_dto = NodeDto.model_validate(node_model)
 
@@ -28,7 +28,7 @@ def post(node_create: NodeCreateDto, service: Annotated[NodeService, Inject(Node
     node_model = service.create(node_create.name, node_create.parent_id)
     if node_model is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=InputError(msg="Failed to create node").model_dump())
+                            detail=[InputError(msg="Failed to create node").model_dump()])
 
     node_dto = NodeDto.model_validate(node_model)
 
@@ -41,7 +41,7 @@ def get_by_id(node_id: UUID, service: Annotated[NodeService, Inject(NodeService)
     node_model = service.get_by_id(node_id, depth)
     if node_model is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=InputError(msg="Node not found").model_dump())
+                            detail=[InputError(msg="Node not found").model_dump()])
 
     node_dto = NodeDto.model_validate(node_model)
 
