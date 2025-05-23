@@ -20,6 +20,10 @@ class NodeService(ABC):
     def create(self, node_name: str, parent_id: UUID | None) -> NodeModel:
         pass
 
+    @abstractmethod
+    def update(self, node_id: UUID, name: str, parent_id: UUID | None) -> NodeModel | None:
+        pass
+
 
 class NodeServiceImpl(NodeService):
     def __init__(self, repository: NodeRepository, db: Database) -> None:
@@ -50,6 +54,23 @@ class NodeServiceImpl(NodeService):
                     return None
             node_entity = NodeEntity(id=uuid4(), name=name, parent_id=parent_id)
             self._repository.create(session, node_entity)
+            session.commit()
+            node_model = NodeModel.model_validate(node_entity)
+            return node_model
+
+    def update(self, node_id: UUID, name: str, parent_id: UUID | None) -> NodeModel | None:
+        if node_id == parent_id:
+            return None
+        with self._db() as session:
+            node_entity = self._repository.get_by_id(session, node_id, 1)
+            if node_entity is None:
+                return None
+            if parent_id is not None:
+                parent_node_entity = self._repository.get_by_id(session, parent_id, 0)
+                if parent_node_entity is None:
+                    return None
+                node_entity.parent_id = parent_id
+            node_entity.name = name
             session.commit()
             node_model = NodeModel.model_validate(node_entity)
             return node_model

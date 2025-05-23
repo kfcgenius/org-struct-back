@@ -19,3 +19,8 @@ class NodeDto(BaseModel):
 class NodeCreateDto(BaseModel):
     name: str
     parent_id: UUID | None
+
+
+class NodeUpdateDto(BaseModel):
+    name: str
+    parent_id: UUID | None
