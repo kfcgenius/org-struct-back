@@ -60,7 +60,11 @@ jobs:
         run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }} .
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }} \
+                       -t ghcr.io/${{ github.repository }}:latest .
 
       - name: Push Docker image to Github Container Registry
-        run: docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }}
+        run: |
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }}
+          docker push ghcr.io/${{ github.repository }}:latest
