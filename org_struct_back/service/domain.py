@@ -13,7 +13,11 @@ class NodeService(ABC):
         pass
 
     @abstractmethod
-    def find_by_name(self, node_name: str, depth: int) -> NodeModel | None:
+    def get_by_name(self, name: str, depth: int) -> list[NodeModel]:
+        pass
+
+    @abstractmethod
+    def get_all(self) -> list[NodeModel]:
         pass
 
     @abstractmethod
@@ -38,13 +42,17 @@ class NodeServiceImpl(NodeService):
             node_model = NodeModel.model_validate(node_entity)
             return node_model
 
-    def find_by_name(self, name: str, depth: int) -> NodeModel | None:
+    def get_by_name(self, name: str, depth: int) -> list[NodeModel]:
         with self._db() as session:
-            node_entity = self._repository.get_by_name(session, name, depth)
-            if node_entity is None:
-                return None
-            node_model = NodeModel.model_validate(node_entity)
-            return node_model
+            node_entities = self._repository.get_by_name(session, name, depth)
+            node_models = [NodeModel.model_validate(i) for i in node_entities]
+            return node_models
+
+    def get_all(self) -> list[NodeModel]:
+        with self._db() as session:
+            node_entities = self._repository.get_all(session)
+            node_models = [NodeModel.model_validate(i) for i in node_entities]
+            return node_models
 
     def create(self, name: str, parent_id: UUID | None) -> NodeModel:
         with self._db() as session:

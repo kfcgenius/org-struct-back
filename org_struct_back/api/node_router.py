@@ -11,14 +11,12 @@ node_router = APIRouter(prefix="/api/v1/nodes", tags=["Nodes"])
 
 
 @node_router.get("")
-def get_by_name(name: Annotated[str, Query(min_length=1)], service: Annotated[NodeService, Inject(NodeService)],
-                depth: Annotated[int, Query(ge=0, le=100)] = 0) -> NodeDto:
-    node_model = service.find_by_name(name, depth)
-    if node_model is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=[InputError(msg="Node not found").model_dump()])
-    node_dto = NodeDto.model_validate(node_model)
-    return node_dto
+def get(service: Annotated[NodeService, Inject(NodeService)],
+        name: Annotated[str, Query()] = "",
+        depth: Annotated[int, Query(ge=0, le=100)] = 0) -> list[NodeDto]:
+    node_models = service.get_all() if len(name) == 0 else service.get_by_name(name, depth)
+    node_dtos = [NodeDto.model_validate(i) for i in node_models]
+    return node_dtos
 
 
 @node_router.post("")
@@ -32,7 +30,8 @@ def post(node_create: NodeCreateDto, service: Annotated[NodeService, Inject(Node
 
 
 @node_router.put("/{node_id}")
-def post(node_id: UUID, node_create: NodeUpdateDto, service: Annotated[NodeService, Inject(NodeService)]) -> NodeDto:
+def put_by_id(node_id: UUID, node_create: NodeUpdateDto,
+              service: Annotated[NodeService, Inject(NodeService)]) -> NodeDto:
     node_model = service.update(node_id, node_create.name, node_create.parent_id)
     if node_model is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

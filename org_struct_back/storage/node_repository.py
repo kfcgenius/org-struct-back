@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session, selectinload
 
 from org_struct_back.storage.entities import NodeEntity
@@ -13,7 +13,11 @@ class NodeRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_name(self, session: Session, name: str, depth: int) -> NodeEntity | None:
+    def get_by_name(self, session: Session, name: str, depth: int) -> list[NodeEntity]:
+        pass
+
+    @abstractmethod
+    def get_all(self, session: Session) -> list[NodeEntity]:
         pass
 
     @abstractmethod
@@ -33,8 +37,8 @@ class NodeRepositoryImpl(NodeRepository):
 
         return session.scalars(query).first()
 
-    def get_by_name(self, session: Session, name: str, depth: int) -> NodeEntity | None:
-        query = select(NodeEntity).filter(NodeEntity.name == name)
+    def get_by_name(self, session: Session, name: str, depth: int) -> list[NodeEntity]:
+        query = select(NodeEntity).filter(func.lower(NodeEntity.name).contains(name.lower()))
 
         if depth > 0:
             current_load = selectinload(NodeEntity.children)
@@ -42,7 +46,11 @@ class NodeRepositoryImpl(NodeRepository):
                 current_load = current_load.selectinload(NodeEntity.children)
             query = query.options(current_load)
 
-        return session.scalars(query).first()
+        return session.scalars(query).all()
+
+    def get_all(self, session: Session) -> list[NodeEntity]:
+        query = select(NodeEntity)
+        return session.scalars(query).all()
 
     def create(self, session: Session, node: NodeEntity) -> None:
         session.add(node)
